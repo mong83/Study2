@@ -2,6 +2,8 @@ package com.skcc.web;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +24,40 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	
+	@GetMapping("/loginForm")
+	public String loginForm() {				
+		return "/user/login";
+	}
+	
+	@PostMapping("/login")
+	public String login(String userId , String password , HttpSession sessoin) {
+		
+		
+		User user = userRepository.findByUserId(userId);  // pk아닌 userId로 조회하려면 repository에  findByUserId 정의
+		
+		
+		if(user==null) {
+			return "redirect:/users/loginForm";
+		}
+		
+		if(!password.equals(user.getPassword())) {
+			return "redirect:/users/loginForm";
+		}
+		
+		sessoin.setAttribute("user" , user);  // session에 login user정보 저장
+		
+		return "redirect:/";  // home 호출 
+	}
+	
 
+	@GetMapping("/logout")
+	public String loginout(HttpSession sessoin) {	
+		sessoin.removeAttribute("user");      // session에 login user정보 삭제
+		return "redirect:/";
+	}
+	
+	
 	@PostMapping("")
 	public String create(User user) {
 		
@@ -34,12 +69,12 @@ public class UserController {
 	@GetMapping("")
 	public String list(Model model) {
 		model.addAttribute("users" , userRepository.findAll());		
-		return "/user/list";          // templates아래의 list.html 호출
+		return "/user/list";          //사용자리스트 , templates아래의 list.html 호출
 	}
 	
 	@GetMapping("/form")
 	public String form() {				
-		return "/user/form";
+		return "/user/form";  //회원가입
 	}
 	
 	@GetMapping("/{id}/form")
@@ -50,7 +85,7 @@ public class UserController {
 		
 		model.addAttribute("user" , user);
 		
-		return "/user/updateForm";
+		return "/user/updateForm"; //회원정보수정
 	}
 	
 	@PutMapping("/{id}")

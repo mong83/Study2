@@ -1,0 +1,1 @@
+insert into user (id , email, name, password, user_id) VALUES ( '2','momo@sk.com', 'test', '1','kyk');
