@@ -1,6 +1,7 @@
 $(".answer-write input[type=submit]").click(addAnswer);
 
 function addAnswer(e) {
+	
 	e.preventDefault();
 	console.log("click!!");
 	
@@ -17,20 +18,13 @@ function addAnswer(e) {
 		dataType : 'json',
 		error : onError,
 		success : onSuccess});
+	
 }
 
 function onError() {
 	
 }
 
-function onSuccess(data, status) {
-	console.log(data);
-	var answerTemplate = $("#answerTemplate").html();
-	var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.question.id, data.id);
-	$(".qna-comment-slipp-articles").prepend(template);
-	
-	$("textarea[name=contents]").val("");
-}
 
 $("a.link-delete-article").click(deleteAnswer);
 
@@ -58,6 +52,18 @@ function deleteAnswer(e) {
 		}
 	});
 }
+
+
+function onSuccess(data, status) {
+	console.log(data);
+	var answerTemplate = $("#answerTemplate").html();
+	var template = answerTemplate.format(data.writer.userId, data.createDate, data.contents, data.question.id, data.id);
+	$(".qna-comment-slipp-articles").prepend(template);
+	
+	$("textarea[name=contents]").val("");
+
+}
+
 
 String.prototype.format = function() {
   var args = arguments;

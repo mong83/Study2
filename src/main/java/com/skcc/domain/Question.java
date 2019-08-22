@@ -13,12 +13,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
-public class Question {
+public class Question extends AbstractEntity{
 	
-	@Id
-	@GeneratedValue
-	private long id;
+
 
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -28,10 +28,11 @@ public class Question {
 
 	private String contents;
 	
-	private LocalDateTime createDate;
+	@JsonProperty
+	private Integer countOfAnswer = 0;
 	
 	@OneToMany(mappedBy="question")
-	@OrderBy("id ASC")
+	@OrderBy("id DESC")
 	private List<Answer> answers;
 
 	public Question() {}
@@ -41,26 +42,9 @@ public class Question {
 		this.writer = writer;
 		this.title = title;
 		this.contents = contents;
-		this.createDate = LocalDateTime.now();
 	}
 
 
-
-	public LocalDateTime getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(LocalDateTime createDate) {
-		this.createDate = createDate;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public User getWriter() {
 		return writer;
@@ -87,19 +71,11 @@ public class Question {
 	}
 
 
-	public String getFormattedCreateDate() {
-		if(createDate == null) {
-			return "";
-		}
-		return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd MM:mm:ss"));
-	}
-
 	public void update(String title, String contents) {
 		
 		this.title = title;
 		this.contents = contents;
-		
-		
+			
 		
 	}
 
@@ -108,4 +84,11 @@ public class Question {
 		return this.writer.equals(loginUser); //같은것으로 인식. 오버라이드 해줘야 함
 	}
 
+	public void addAnswer() {
+		this.countOfAnswer += 1;
+	}
+	
+	public void deleteAnswer() {
+		this.countOfAnswer -= 1;
+	}
 }
